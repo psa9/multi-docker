@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t psa9/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true psa9/react-test npm test
+
+after_success:
+  - docker build -t psa39/multi-client ./client
+  - docker build -t psa39/multi-nginx ./nginx
+  - docker build -t psa39/multi-server ./server
+  - docker build -t psa39/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push psa39/multi-client
+  - docker push psa39/multi-nginx
+  - docker push psa39/multi-server
+  - docker push psa39/multi-worker
