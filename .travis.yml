@@ -22,3 +22,17 @@ after_success:
   - docker push psa39/multi-nginx
   - docker push psa39/multi-server
   - docker push psa39/multi-worker
+
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-docker
+  env: Multidocker-env
+  bucket_name: elasticbeanstalk-us-east-2-416038038578
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
